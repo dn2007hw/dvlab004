@@ -1,0 +1,14 @@
+.sburst {
+  stroke: #fff;
+  fill-opacity: 0.5;
+}
+.sburst:hover {
+  stroke: #fff;
+  fill-opacity: 0.9;
+}
+.stext {
+  font: 8px arial;
+}
+.stext:hover {
+  font: 12px arial;
+}
