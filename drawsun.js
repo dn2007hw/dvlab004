@@ -122,6 +122,20 @@ function drawSunBurst() {
       .attr("transform", (d) => labelTransform(d))
       .text((d) => d.data.name);
 
+    svg
+      .append("text")
+      .attr("x", 25)
+      .attr("y", 25)
+      .attr("font-size", "20px")
+      .text("WORLD POPULATION PROJECTION 2020 - 2100");
+
+    svg
+      .append("text")
+      .attr("x", 600)
+      .attr("y", 400)
+      .attr("font-size", "10px")
+      .text("WORLD POPULATION");
+
     function labelVisible(d) {
       return d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
     }

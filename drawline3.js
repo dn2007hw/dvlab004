@@ -20,9 +20,16 @@ function drawLineThree(dataOne, dataTwo) {
     return Number(d.year);
   });
 
-  const yExtent = d3.extent(tempdataOne, (d) => {
+  const y1Extent = d3.extent(tempdataOne, (d) => {
     return Number(d.count);
   });
+  const y2Extent = d3.extent(tempdataTwo, (d) => {
+    return Number(d.count);
+  });
+
+  const yExtent = [];
+  yExtent[0] = d3.min([y1Extent[0], y2Extent[0]]);
+  yExtent[1] = d3.max([y1Extent[1], y2Extent[1]]);
 
   // X Axis
   const x = d3.scaleLinear().domain([xExtent[0], xExtent[1]]).range([0, xMax]);
@@ -89,44 +96,31 @@ function drawLineThree(dataOne, dataTwo) {
         })
     );
 
-  /*
-
   svgL
     .append("text")
     .attr("x", 70)
     .attr("y", 20)
     .attr("stroke-width", "0.5px")
     .attr("font-size", "14px")
-    .text(data[0].location + " Vaccination details");
+    .text(tempdataOne[0].name + " - Fertility vs Mortality");
 
   svgL
     .append("text")
     .attr("x", 60)
     .attr("y", 35)
-    .attr("stroke", "salmon")
+    .attr("stroke", "green")
     .attr("stroke-width", "0.4px")
     .attr("font-size", "10px")
-    .text("---People Vaccinated");
+    .text("---Fertility");
 
   svgL
     .append("text")
     .attr("x", 60)
     .attr("y", 50)
-    .attr("stroke", "olive")
-    .attr("stroke-width", "0.4px")
-    .attr("font-size", "10px")
-    .text("---People Fully Vaccinated");
-
-  svgL
-    .append("text")
-    .attr("x", 175)
-    .attr("y", 35)
     .attr("stroke", "blue")
     .attr("stroke-width", "0.4px")
     .attr("font-size", "10px")
-    .text("---Total Boosters");
-
-*/
+    .text("---Mortality");
 }
 
 function processData(data) {
