@@ -7,13 +7,18 @@
 //geojson and data file loading.
 let fertilityfile = d3.csv("Fertility.csv");
 let mortalityfile = d3.csv("Mortality.csv");
-let populationfile = d3.csv("Estimates.csv");
-let fertilityData, mortalityData, populationData;
+let estimationfile = d3.csv("Estimates.csv");
+let populationfile = d3.csv("Population.csv");
+
+let fertilityData, mortalityData, populationData, estimationData;
 
 // Load external data and boot
-Promise.all([fertilityfile, mortalityfile, populationfile]).then(function (
-  data
-) {
+Promise.all([
+  fertilityfile,
+  mortalityfile,
+  estimationfile,
+  populationfile,
+]).then(function (data) {
   //Data is grouped on iso code.
   fertilityData = d3.group(data[0], (d) => {
     return d.ccode;
@@ -25,18 +30,32 @@ Promise.all([fertilityfile, mortalityfile, populationfile]).then(function (
   });
 
   //Data is grouped on iso code.
-  populationData = d3.group(data[2], (d) => {
+  estimationData = d3.group(data[2], (d) => {
+    return d.ccode;
+  });
+
+  //Data is grouped on iso code.
+  populationData = d3.group(data[3], (d) => {
     return d.ccode;
   });
 
   drawSunBurst();
-  drawLineOne(populationData.get("900"), fertilityData.get("900"));
-  drawLineTwo(populationData.get("900"), mortalityData.get("900"));
+  drawLineOne(
+    estimationData.get("900"),
+    fertilityData.get("900"),
+    mortalityData.get("900")
+  );
+  drawLineTwo(estimationData.get("900"), mortalityData.get("900"));
   drawLineThree(fertilityData.get("900"), mortalityData.get("900"));
+  drawLineFour(data[3], populationData);
 });
 
 function drawLines(ccode) {
-  drawLineOne(populationData.get(ccode), fertilityData.get(ccode));
-  drawLineTwo(populationData.get(ccode), mortalityData.get(ccode));
+  drawLineOne(
+    estimationData.get(ccode),
+    fertilityData.get(ccode),
+    mortalityData.get(ccode)
+  );
+  drawLineTwo(estimationData.get(ccode), mortalityData.get(ccode));
   drawLineThree(fertilityData.get(ccode), mortalityData.get(ccode));
 }

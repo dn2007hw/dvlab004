@@ -102,12 +102,20 @@ function drawLineThree(dataOne, dataTwo) {
     .attr("y", 20)
     .attr("stroke-width", "0.5px")
     .attr("font-size", "14px")
-    .text(tempdataOne[0].name + " - Fertility vs Mortality");
+    .text("Comparison chart - Fertility vs Mortality");
+
+  svgL
+    .append("text")
+    .attr("x", 70)
+    .attr("y", 35)
+    .attr("stroke-width", "0.5px")
+    .attr("font-size", "12px")
+    .text(tempdataOne[0].name);
 
   svgL
     .append("text")
     .attr("x", 60)
-    .attr("y", 35)
+    .attr("y", 50)
     .attr("stroke", "green")
     .attr("stroke-width", "0.4px")
     .attr("font-size", "10px")
@@ -115,25 +123,25 @@ function drawLineThree(dataOne, dataTwo) {
 
   svgL
     .append("text")
-    .attr("x", 60)
+    .attr("x", 160)
     .attr("y", 50)
     .attr("stroke", "blue")
     .attr("stroke-width", "0.4px")
     .attr("font-size", "10px")
     .text("---Mortality");
-}
 
-function processData(data) {
-  let localdata = [];
-  for (let i = 2020; i <= 2100; i++) {
-    localdata.push({
-      name: data["Region"],
-      ccode: data["ccode"],
-      pcode: data["pcode"],
-      type: data["Type"],
-      year: i,
-      count: Number(data[i]),
-    });
+  function processData(data) {
+    let localdata = [];
+    for (let i = 2020; i <= 2100; i++) {
+      localdata.push({
+        name: data["Region"],
+        ccode: data["ccode"],
+        pcode: data["pcode"],
+        type: data["Type"],
+        year: i,
+        count: Number(data[i]),
+      });
+    }
+    return localdata;
   }
-  return localdata;
 }

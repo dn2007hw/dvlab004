@@ -131,10 +131,12 @@ function drawSunBurst() {
 
     svg
       .append("text")
-      .attr("x", 600)
-      .attr("y", 400)
-      .attr("font-size", "10px")
-      .text("WORLD POPULATION");
+      .attr("id", "mtextL1")
+      .attr("x", width / 2)
+      .attr("y", height / 2)
+      .attr("font-size", "15px")
+      .style("text-anchor", "middle")
+      .text("WORLD");
 
     function labelVisible(d) {
       return d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
@@ -151,7 +153,7 @@ function drawSunBurst() {
     }
 
     function onmouseOver(event, p) {
-      //    console.log(p.data.name);
+      svg.select("#mtextL1").text(p.data.name);
     }
   });
 }

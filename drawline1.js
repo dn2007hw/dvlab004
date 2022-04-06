@@ -3,10 +3,12 @@
  *  * @param - data of a country for which the bar chart needs to be drawn.
  *  * @return {void} Nothing
  */
-function drawLineOne(dataOne, dataTwo) {
+function drawLineOne(dataOne, dataTwo, dataThree) {
   let tempdataOne = processData(dataOne[0]);
   let tempdataTwo = processData(dataTwo[0]);
+  let tempdataThree = processData(dataThree[0]);
 
+  let idleTimeout;
   const svgL = d3.select("body").select("#chart1");
   const xSize = +svgL.attr("width");
   const ySize = +svgL.attr("height");
@@ -26,10 +28,13 @@ function drawLineOne(dataOne, dataTwo) {
   const y2Extent = d3.extent(tempdataTwo, (d) => {
     return Number(d.count);
   });
+  const y3Extent = d3.extent(tempdataThree, (d) => {
+    return Number(d.count);
+  });
 
   const yExtent = [];
-  yExtent[0] = d3.min([y1Extent[0], y2Extent[0]]);
-  yExtent[1] = d3.max([y1Extent[1], y2Extent[1]]);
+  yExtent[0] = d3.min([y1Extent[0], y2Extent[0], y3Extent[0]]);
+  yExtent[1] = d3.max([y1Extent[1], y2Extent[1], y3Extent[1]]);
 
   // X Axis
   const x = d3.scaleLinear().domain([xExtent[0], xExtent[1]]).range([0, xMax]);
@@ -52,13 +57,41 @@ function drawLineOne(dataOne, dataTwo) {
   // left y axis
   const yAxis = svgLine.append("g").call(d3.axisLeft(y).ticks(8));
 
-  let svgPL = svgLine.append("g");
+  // Add a clipPath: everything out of this area won't be drawn.
+  svgL
+    .append("defs")
+    .append("svgL:clipPath")
+    .attr("id", "clip")
+    .append("svgL:rect")
+    .attr("width", xMax)
+    .attr("height", yMax)
+    .attr("x", 0)
+    .attr("y", 0);
 
-  // Add the line
+  let brush = d3
+    .brushX() // Add the brush feature using the d3.brush function
+    .extent([
+      [0, 0],
+      [xMax, yMax],
+    ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+    .on("end", onBrushed); // Each time the brush selection changes, trigger the 'updateChart' function
+
+  //let svgPL = svgLine.append("g");
+  let svgPL = svgLine.append("g").attr("clip-path", "url(#clip)");
+
+  svgPL
+    .append("g")
+    .attr("transform", "translate(0,0)")
+    .attr("width", xMax)
+    .attr("height", yMax)
+    .attr("class", "brush")
+    .call(brush);
+
+  // Add the line 1
   svgPL
     .append("path")
     .datum(tempdataOne)
-    .attr("id", "chart3line1")
+    .attr("id", "chart1line1")
     .attr("fill", "none")
     .attr("stroke", "green")
     .attr("stroke-width", 1)
@@ -75,13 +108,34 @@ function drawLineOne(dataOne, dataTwo) {
         })
     );
 
-  // Add the line
+  // Add the line 2
   svgPL
     .append("path")
     .datum(tempdataTwo)
-    .attr("id", "chart3line1")
+    .attr("id", "chart1line2")
     .attr("fill", "none")
     .attr("stroke", "blue")
+    .attr("stroke-width", 1)
+    .style("opacity", 0.3)
+    .attr(
+      "d",
+      d3
+        .line()
+        .x(function (d) {
+          return x(Number(d.year));
+        })
+        .y(function (d) {
+          return y(Number(d.count));
+        })
+    );
+
+  // Add the line 3
+  svgPL
+    .append("path")
+    .datum(tempdataThree)
+    .attr("id", "chart1line3")
+    .attr("fill", "none")
+    .attr("stroke", "red")
     .attr("stroke-width", 1)
     .style("opacity", 0.3)
     .attr(
@@ -102,12 +156,20 @@ function drawLineOne(dataOne, dataTwo) {
     .attr("y", 20)
     .attr("stroke-width", "0.5px")
     .attr("font-size", "14px")
-    .text(tempdataOne[0].name + " - Population vs Fertility");
+    .text("Comparison chart - Population vs Fertility vs Mortality");
+
+  svgL
+    .append("text")
+    .attr("x", 70)
+    .attr("y", 35)
+    .attr("stroke-width", "0.5px")
+    .attr("font-size", "12px")
+    .text(tempdataOne[0].name);
 
   svgL
     .append("text")
     .attr("x", 60)
-    .attr("y", 35)
+    .attr("y", 50)
     .attr("stroke", "green")
     .attr("stroke-width", "0.4px")
     .attr("font-size", "10px")
@@ -115,25 +177,95 @@ function drawLineOne(dataOne, dataTwo) {
 
   svgL
     .append("text")
-    .attr("x", 60)
+    .attr("x", 160)
     .attr("y", 50)
     .attr("stroke", "blue")
     .attr("stroke-width", "0.4px")
     .attr("font-size", "10px")
     .text("---Fertility");
-}
 
-function processData(data) {
-  let localdata = [];
-  for (let i = 2020; i <= 2100; i++) {
-    localdata.push({
-      name: data["Region"],
-      ccode: data["ccode"],
-      pcode: data["pcode"],
-      type: data["Type"],
-      year: i,
-      count: Number(data[i]),
-    });
+  svgL
+    .append("text")
+    .attr("x", 260)
+    .attr("y", 50)
+    .attr("stroke", "red")
+    .attr("stroke-width", "0.4px")
+    .attr("font-size", "10px")
+    .text("---Mortality");
+
+  function idled() {
+    idleTimeout = null;
   }
-  return localdata;
+
+  function onBrushed(event) {
+    const extent = event.selection;
+
+    // If no selection, back to initial coordinate. Otherwise, update X axis domain
+    if (!extent) {
+      if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350)); // This allows to wait a little bit
+      {
+        x.domain([xExtent[0], xExtent[1]]);
+      }
+    } else {
+      x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+      svgLine.select(".brush").call(brush.move, null); // This remove the grey brush area as soon as the selection has been done
+    }
+
+    // Update axis and circle position
+    xAxis.transition().duration(500).call(d3.axisBottom(x).ticks(5));
+
+    // redraw line1
+    svgPL.select("#chart1line1").attr(
+      "d",
+      d3
+        .line()
+        .x(function (d) {
+          return x(Number(d.year));
+        })
+        .y(function (d) {
+          return y(Number(d.count));
+        })
+    );
+
+    // redraw line2
+    svgPL.select("#chart1line2").attr(
+      "d",
+      d3
+        .line()
+        .x(function (d) {
+          return x(Number(d.year));
+        })
+        .y(function (d) {
+          return y(Number(d.count));
+        })
+    );
+
+    // redraw line3
+    svgPL.select("#chart1line3").attr(
+      "d",
+      d3
+        .line()
+        .x(function (d) {
+          return x(Number(d.year));
+        })
+        .y(function (d) {
+          return y(Number(d.count));
+        })
+    );
+  }
+
+  function processData(data) {
+    let localdata = [];
+    for (let i = 2020; i <= 2100; i++) {
+      localdata.push({
+        name: data["Region"],
+        ccode: data["ccode"],
+        pcode: data["pcode"],
+        type: data["Type"],
+        year: i,
+        count: Number(data[i]),
+      });
+    }
+    return localdata;
+  }
 }
