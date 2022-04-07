@@ -1,27 +1,29 @@
 /**
- * drawLineTwo function which receives the data from main function and draws bar chart on the vaccination details.
- *  * @param - data of a country for which the bar chart needs to be drawn.
+ * drawLineOne function which receives the data from main function and draws comparison line chart with projected population, fertility and mortality data.
+ *  * @param - dataOne carries the population data, dataTwo carries the fertilify data and dataThree carries the mortality data.
  *  * @return {void} Nothing
  */
 function drawLineOne(dataOne, dataTwo, dataThree) {
-  let tempdataOne = processData(dataOne[0]);
-  let tempdataTwo = processData(dataTwo[0]);
-  let tempdataThree = processData(dataThree[0]);
+  let tempdataOne = processData(dataOne[0]); //local variable to store the projected population data after reformatting thru function processData.
+  let tempdataTwo = processData(dataTwo[0]); //local variable to store the projected fertility data after reformatting thru function processData.
+  let tempdataThree = processData(dataThree[0]); //local variable to store the projected mortality data after reformatting thru function processData.
 
-  let idleTimeout;
-  const svgL = d3.select("body").select("#chart1");
-  const xSize = +svgL.attr("width");
-  const ySize = +svgL.attr("height");
-  const margin = 65;
-  const xMax = xSize - margin;
-  const yMax = ySize - margin * 2;
+  let idleTimeout; // local vairable to store the idleTimeout used in brushing
+  const svgL = d3.select("body").select("#chart1"); //local svg variable to refer the SVG defined in HTML.
+  const xSize = +svgL.attr("width"); //local variable to retrieve the width of SVG fro HTML.
+  const ySize = +svgL.attr("height"); //local variable to retrieve the height of SVG fro HTML.
+  const margin = 65; // local variable to store the margin of the SVG.
+  const xMax = xSize - margin; // local vairiable to store the maximum of x axis to be used with in the SVG.
+  const yMax = ySize - margin * 2; // local vairiable to store the maximum of x axis to be used with in the SVG.
 
   // Get the 'limits' of the data - the full extent (mins and max)
   // so the plotted data fits perfectly
+  //xExtent determines the range of years for the X axis.
   const xExtent = d3.extent(tempdataOne, (d) => {
     return Number(d.year);
   });
 
+  //yExtent determines the range of values for the Y axis.
   const y1Extent = d3.extent(tempdataOne, (d) => {
     return Number(d.count);
   });
@@ -36,7 +38,7 @@ function drawLineOne(dataOne, dataTwo, dataThree) {
   yExtent[0] = d3.min([y1Extent[0], y2Extent[0], y3Extent[0]]);
   yExtent[1] = d3.max([y1Extent[1], y2Extent[1], y3Extent[1]]);
 
-  // X Axis
+  // X scale is defined for the value to be plotted along X Axis
   const x = d3.scaleLinear().domain([xExtent[0], xExtent[1]]).range([0, xMax]);
 
   svgL.selectAll("*").remove();
@@ -253,7 +255,7 @@ function drawLineOne(dataOne, dataTwo, dataThree) {
         })
     );
   }
-
+  //function processData is called upon using population / fertility / mortality data as argument. The data is reformatted and retured as an array of objects.
   function processData(data) {
     let localdata = [];
     for (let i = 2020; i <= 2100; i++) {

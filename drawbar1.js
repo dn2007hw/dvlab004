@@ -4,17 +4,17 @@
  *  * @return {void} Nothing
  */
 function drawBarOne(data) {
-  const bardata = filterData(data, 2020, 12);
-
-  const svgL = d3.select("body").select("#chart2");
-  const xSize = +svgL.attr("width");
-  const ySize = +svgL.attr("height");
-  const margin = 65;
-  const xMax = xSize - margin;
-  const yMax = ySize - margin * 2;
+  const bardata = filterData(data, 2020, 12); //local variable to store the formatted data.
+  const svgL = d3.select("body").select("#chart2"); //local svg variable to refer the SVG defined in HTML.
+  const xSize = +svgL.attr("width"); //local variable to retrieve the width of SVG fro HTML.
+  const ySize = +svgL.attr("height"); //local variable to retrieve the height of SVG fro HTML.
+  const margin = 65; // local variable to store the margin of the SVG.
+  const xMax = xSize - margin; // local vairiable to store the maximum of x axis to be used with in the SVG.
+  const yMax = ySize - margin * 2; // local vairiable to store the maximum of x axis to be used with in the SVG.
 
   // Get the 'limits' of the data - the full extent (mins and max)
   // so the plotted data fits perfectly
+  //xExtent determines the range of years for the X axis.
   const xExtent = d3.extent(bardata, (d) => {
     return Number(d.count);
   });
@@ -36,7 +36,7 @@ function drawBarOne(data) {
     .attr("y", 20)
     .attr("stroke-width", "0.5px")
     .attr("font-size", "14px")
-    .text("World Population between 1950 & 2020");
+    .text("2020 Population - Top 12 Countries.");
 
   function update(data) {
     //xAxis
@@ -47,7 +47,6 @@ function drawBarOne(data) {
       .call(d3.axisTop(x).ticks(6))
       .attr("color", "green"); // make bottom axis green
 
-    //svgL.selectAll("*").remove();
     let svgPL = svgLine.append("g");
 
     let u = svgPL.selectAll("rect").data(

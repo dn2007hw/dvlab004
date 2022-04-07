@@ -4,20 +4,19 @@
  *  * @return {void} Nothing
  */
 function drawBarTwo(data) {
-  //
-  const bardata = filterData(data, 2100, 12);
-
-  var svg = d3.select("body").select("#chart3"),
-    u,
-    uu;
-  const xSize = +svg.attr("width");
-  const ySize = +svg.attr("height");
-  const margin = 65;
-  const xMax = xSize - margin;
-  const yMax = ySize - margin * 2;
+  const bardata = filterData(data, 2100, 12); //local variable to store the formatted data.
+  var svg = d3.select("body").select("#chart3"), //local svg variable to refer the SVG defined in HTML.
+    u, //local svg variable to refer the SVG defined in HTML.
+    uu; //local svg variable to refer the SVG defined in HTML.
+  const xSize = +svg.attr("width"); //local variable to retrieve the width of SVG fro HTML.
+  const ySize = +svg.attr("height"); //local variable to retrieve the height of SVG fro HTML.
+  const margin = 65; // local variable to store the margin of the SVG.
+  const xMax = xSize - margin; // local vairiable to store the maximum of x axis to be used with in the SVG.
+  const yMax = ySize - margin * 2; // local vairiable to store the maximum of x axis to be used with in the SVG.
 
   // Get the 'limits' of the data - the full extent (mins and max)
   // so the plotted data fits perfectly
+  //xExtent determines the range of years for the X axis.
   var xExtent = d3.extent(bardata, (d) => {
     return Number(d.count);
   });
@@ -28,7 +27,7 @@ function drawBarTwo(data) {
     .attr("y", 20)
     .attr("stroke-width", "0.5px")
     .attr("font-size", "14px")
-    .text("World Population between 2020 & 2100");
+    .text("2100 Projected Population - Top 12 Countries.");
 
   // X Axis
   var x = d3.scaleLinear().domain([xExtent[0], xExtent[1]]).range([0, xMax]);
@@ -52,7 +51,7 @@ function drawBarTwo(data) {
 
   function update(idata) {
     //
-    console.log(idata);
+    //console.log(idata);
     //
     xExtent = d3.extent(idata, (d) => {
       return Number(d.count);
@@ -63,7 +62,6 @@ function drawBarTwo(data) {
       .attr("transform", "translate(0,0)")
       .call(d3.axisTop(x).ticks(6));
 
-    //svgL.selectAll("*").remove();
     svgL.append("g");
 
     u = svgL.selectAll("rect").data(
@@ -82,7 +80,7 @@ function drawBarTwo(data) {
     uu.append("rect")
       .merge(u)
       .transition()
-      .duration(1000)
+      .duration(3000)
       .attr("fill", function (d) {
         return color(d.name);
       })
@@ -93,9 +91,8 @@ function drawBarTwo(data) {
 
     uu.append("text")
       .transition()
-      .duration(1000)
+      .duration(3000)
       .attr("x", function (d) {
-        //      return x(d.count);
         return 5;
       })
       .attr("y", 10)
@@ -119,8 +116,9 @@ function drawBarTwo(data) {
   }
 
   update(bardata);
-  let j;
+  /* let j;
   for (j = 2020; j <= 2100; j++) {
     update(filterData(data, j, 12));
   }
+*/
 }
