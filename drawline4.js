@@ -4,28 +4,48 @@
  *  * @return {void} Nothing
  */
 function drawLineFour(data1, data2) {
-  let localdata = [];
-  for (x in data1) {
-    processData(data1[x]);
-  }
-  console.log(localdata);
+  let localpastdata = [],
+    localfuturedata = [],
+    filtereddata = [];
 
-  function processData(data) {
-    for (let i = 1950; i <= 2020; i++) {
-      localdata.push({
-        name: data["Region"],
-        ccode: data["ccode"],
-        pcode: data["pcode"],
-        type: data["Type"],
+  data1.forEach(function (d) {
+    processData(d, localpastdata, 1950, 2020);
+  });
+
+  data2.forEach(function (d) {
+    processData(d, localfuturedata, 2020, 2100);
+  });
+
+  // console.log(filterData(localpastdata, 1970, 12));
+
+  drawBarOne(filterData(localpastdata, 2020, 12));
+  /*
+let j=0;
+for (j=1950; j<2020; j++){
+  drawBarOne(filterData(localpastdata, j, 12));
+}
+*/
+
+  function processData(dataIn, dataOut, minYear, maxYear) {
+    for (let i = minYear; i <= maxYear; i++) {
+      dataOut.push({
+        name: dataIn["Region"],
+        ccode: dataIn["ccode"],
+        pcode: dataIn["pcode"],
+        type: dataIn["Type"],
         year: i,
-        count: Number(data[i]),
+        count: Number(dataIn[i]),
       });
     }
+  }
 
-    let localdata1 = [];
-    localdata.forEach(function (d) {
-      localdata1[d.year] = d;
+  function filterData(data, year, n) {
+    let localfiltereddata = data.filter(function (d) {
+      return Number(d.year) == year && d.type == "Country/Area";
     });
-    return localdata1;
+    localfiltereddata.sort((a, b) => d3.descending(a.count, b.count));
+    for (let i = 0; i < localfiltereddata.length; i++)
+      localfiltereddata[i].rank = Math.min(n, i);
+    return localfiltereddata;
   }
 }

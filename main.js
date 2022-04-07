@@ -46,7 +46,7 @@ Promise.all([
     mortalityData.get("900")
   );
   drawLineTwo(estimationData.get("900"), mortalityData.get("900"));
-  drawLineThree(fertilityData.get("900"), mortalityData.get("900"));
+  //  drawLineThree(fertilityData.get("900"), mortalityData.get("900"));
   drawLineFour(data[3], populationData);
 });
 
@@ -57,5 +57,5 @@ function drawLines(ccode) {
     mortalityData.get(ccode)
   );
   drawLineTwo(estimationData.get(ccode), mortalityData.get(ccode));
-  drawLineThree(fertilityData.get(ccode), mortalityData.get(ccode));
+  //  drawLineThree(fertilityData.get(ccode), mortalityData.get(ccode));
 }
