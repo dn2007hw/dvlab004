@@ -137,6 +137,14 @@ function drawSunBurst() {
       .attr("font-size", "15px")
       .style("text-anchor", "middle")
       .text("WORLD");
+    svg
+      .append("text")
+      .attr("id", "mtextL2")
+      .attr("x", width / 2)
+      .attr("y", height / 2 + 15)
+      .attr("font-size", "12px")
+      .style("text-anchor", "middle")
+      .text("");
 
     function labelVisible(d) {
       return d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
@@ -154,6 +162,7 @@ function drawSunBurst() {
 
     function onmouseOver(event, p) {
       svg.select("#mtextL1").text(p.data.name);
+      svg.select("#mtextL2").text("Current Population:" + p.data.population);
     }
   });
 }

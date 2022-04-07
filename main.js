@@ -7,8 +7,8 @@
 //geojson and data file loading.
 let fertilityfile = d3.csv("Fertility.csv");
 let mortalityfile = d3.csv("Mortality.csv");
-let estimationfile = d3.csv("Estimates.csv");
 let populationfile = d3.csv("Population.csv");
+let estimationfile = d3.csv("Estimates.csv");
 
 let fertilityData, mortalityData, populationData, estimationData;
 
@@ -16,26 +16,26 @@ let fertilityData, mortalityData, populationData, estimationData;
 Promise.all([
   fertilityfile,
   mortalityfile,
-  estimationfile,
   populationfile,
+  estimationfile,
 ]).then(function (data) {
-  //Data is grouped on iso code.
+  //Data is grouped on country code.
   fertilityData = d3.group(data[0], (d) => {
     return d.ccode;
   });
 
-  //Data is grouped on iso code.
+  //Data is grouped on country code.
   mortalityData = d3.group(data[1], (d) => {
     return d.ccode;
   });
 
-  //Data is grouped on iso code.
-  estimationData = d3.group(data[2], (d) => {
+  //Data is grouped on country code.
+  populationData = d3.group(data[2], (d) => {
     return d.ccode;
   });
 
-  //Data is grouped on iso code.
-  populationData = d3.group(data[3], (d) => {
+  //Data is grouped on country code.
+  estimationData = d3.group(data[3], (d) => {
     return d.ccode;
   });
 
@@ -45,9 +45,7 @@ Promise.all([
     fertilityData.get("900"),
     mortalityData.get("900")
   );
-  drawLineTwo(estimationData.get("900"), mortalityData.get("900"));
-  //  drawLineThree(fertilityData.get("900"), mortalityData.get("900"));
-  drawLineFour(data[3], populationData);
+  bardata(data[2], data[3]);
 });
 
 function drawLines(ccode) {
@@ -56,6 +54,4 @@ function drawLines(ccode) {
     fertilityData.get(ccode),
     mortalityData.get(ccode)
   );
-  drawLineTwo(estimationData.get(ccode), mortalityData.get(ccode));
-  //  drawLineThree(fertilityData.get(ccode), mortalityData.get(ccode));
 }
