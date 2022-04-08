@@ -31,7 +31,7 @@ function drawSunBurst() {
       pparent[d.pcode] = parent1;
     });
 
-    //Idex 1828 is the root of the hierachy in the data file, which is used to build the json data hierarchy.
+    //Index 1828 is the root of the hierachy in the data file, which is used to build the json data hierarchy.
     data = pparent[1828];
 
     // JSON data prepated is stored in a local variable to use further in the code.
